@@ -23,7 +23,7 @@ def test_when_timer_is_started_should_be_active():
     t.start()
     assert t.is_active()
 
-def test_if_timer_is_started_and_then_stopped_should_not_be_active():
+def test_timer_is_started_and_then_stopped_should_not_be_active():
     t = Timer(parser)
     validate_timer(t)
     t.start()
