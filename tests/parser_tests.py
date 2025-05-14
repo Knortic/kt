@@ -25,3 +25,9 @@ def test_is_first_command_line_arg_positive():
     args = parser.process_args()
     assert(int(args[0]) >= 0)
 
+def test_given_first_command_line_arg_negative_should_throw_exception():
+    invalid_parser = CommandLineArgsParser("-1", "test")
+
+    with pytest.raises(InvalidArgumentError):
+        invalid_parser.process_args()
+
