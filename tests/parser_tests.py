@@ -21,3 +21,7 @@ def test_is_second_command_line_arg_a_string():
     args = parser.process_args()
     assert isinstance(args[1], str)
 
+def test_is_first_command_line_arg_positive():
+    args = parser.process_args()
+    assert(int(args[0]) >= 0)
+
