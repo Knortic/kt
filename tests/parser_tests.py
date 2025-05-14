@@ -39,4 +39,9 @@ def test_given_second_command_line_arg_is_not_a_string_throw_exception():
     with pytest.raises(InvalidArgumentError):
         invalid_parser.process_args()
 
+def test_first_argument_can_handle_minute_time_format():
+    valid_parser = CommandLineArgsParser("30m", "Focus on work for 30 minutes")
+    args = valid_parser.process_args()
+    assert args[0].isnumeric()
+    assert int(args[0]) == 30
 
