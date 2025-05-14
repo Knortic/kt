@@ -57,3 +57,10 @@ def test_first_argument_can_handle_hour_time_format():
     assert args[0].isnumeric()
     assert int(args[0]) == 1
 
+def test_given_empty_string_as_first_argument_throw_exception():
+    invalid_parser = CommandLineArgsParser("", "test")
+
+    with pytest.raises(InvalidArgumentError):
+        invalid_parser.process_args()
+
+    
