@@ -70,6 +70,9 @@ class CommandLineArgsParser:
         if is_hour_format:
             self.out_timestamp = TimeStamp(timedelta(hours=int(duration)))
 
+        if len(self.args) == 1:
+            return self.args
+
         description = self.args[1]
 
         if not isinstance(description, str):
