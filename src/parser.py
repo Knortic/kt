@@ -43,7 +43,9 @@ class CommandLineArgsParser:
         return input_str
 
     def process_args(self):
-        has_too_many_args = len(self.args) > MAX_ARGS
+        arg_count = len(self.args)
+
+        has_too_many_args = arg_count > MAX_ARGS
         if has_too_many_args:
             raise InvalidArgumentError("Arguments exceeded size of 2!")
 
@@ -70,7 +72,7 @@ class CommandLineArgsParser:
         if is_hour_format:
             self.out_timestamp = TimeStamp(timedelta(hours=int(duration)))
 
-        if len(self.args) == 1:
+        if arg_count == 1:
             return self.args
 
         description = self.args[1]
