@@ -45,3 +45,9 @@ def test_first_argument_can_handle_minute_time_format():
     assert args[0].isnumeric()
     assert int(args[0]) == 30
 
+def test_first_argument_can_handle_second_time_format():
+    valid_parser = CommandLineArgsParser("20s", "Do jumping jacks for 20 seconds")
+    args = valid_parser.process_args()
+    assert args[0].isnumeric()
+    assert int(args[0]) == 20
+
