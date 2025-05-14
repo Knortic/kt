@@ -1,8 +1,0 @@
-        if len(self.args) == 1:
-            return self.args
-
-        description = self.args[1]
-
-        if not isinstance(description, str) 
-            raise InvalidArgumentError("Invalid second argument, must be of type string!")
-
