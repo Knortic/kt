@@ -74,3 +74,9 @@ def test_given_single_argument_should_succeed():
     assert len(args) == 1
     assert args[0] == "25"
 
+def test_given_no_arguments_should_throw_exception():
+    invalid_parser = CommandLineArgsParser()
+    
+    with pytest.raises(InvalidArgumentError):
+        invalid_parser.process_args()
+
