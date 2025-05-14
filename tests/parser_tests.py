@@ -68,4 +68,9 @@ def test_given_empty_string_as_second_argument_should_succeed():
     args = valid_parser.process_args()
     assert args[1] == ""
 
-    
+def test_given_single_argument_should_succeed():
+    valid_parser = CommandLineArgsParser("25m")
+    args = valid_parser.process_args()
+    assert len(args) == 1
+    assert args[0] == "25"
+
