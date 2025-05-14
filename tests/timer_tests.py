@@ -17,3 +17,9 @@ def test_after_timer_created_should_not_be_active():
     validate_timer(t)
     assert not t.is_active()
 
+def test_when_timer_is_started_should_be_active():
+    t = Timer(parser)
+    validate_timer(t)
+    t.start()
+    assert t.is_active()
+
