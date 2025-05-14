@@ -14,19 +14,31 @@ class CommandLineArgsParser:
     def __init__(self, *args):
         self.args = list(args)
 
+    def is_second_format(self, input_str):
+        return input_str.endswith('s')
+
+    def is_minute_format(self, input_str):
+        return input_str.endswith('m')
+
+    def convert_to_duration_string(self, input_str):
+        if self.is_second_format(input_str) or self.is_minute_format(input_str):
+            # Trim the last character off the string
+            input_str = input_str[:-1]
+
+        return input_str
+
     def process_args(self):
         has_too_many_args = len(self.args) > MAX_ARGS
         if has_too_many_args:
             raise InvalidArgumentError("Arguments exceeded size of 2!")
 
+        raw_duration = self.args[0]
+
+        is_second_format = self.is_second_format(raw_duration)
+        is_minute_format = self.is_minute_format(raw_duration)
+
+        self.args[0] = self.convert_to_duration_string(raw_duration)
         duration = self.args[0]
-
-        is_minute_format = duration.endswith('m')
-        is_second_format = duration.endswith('s')
-
-        if  is_second_format or is_minute_format:
-            duration = duration[:-1]
-            self.args[0] = duration
 
         if not (duration.isnumeric()):
             raise InvalidArgumentError("Invalid first argument, must be numeric!")
