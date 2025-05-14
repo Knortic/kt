@@ -45,6 +45,9 @@ class CommandLineArgsParser:
     def process_args(self):
         arg_count = len(self.args)
 
+        if arg_count == 0:
+            raise InvalidArgumentError("No arguments provided! Argument count should be either 1 or 2!")
+
         has_too_many_args = arg_count > MAX_ARGS
         if has_too_many_args:
             raise InvalidArgumentError("Arguments exceeded size of 2!")
