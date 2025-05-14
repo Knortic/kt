@@ -63,4 +63,9 @@ def test_given_empty_string_as_first_argument_throw_exception():
     with pytest.raises(InvalidArgumentError):
         invalid_parser.process_args()
 
+def test_given_empty_string_as_second_argument_should_succeed():
+    valid_parser = CommandLineArgsParser("5m", "")
+    args = valid_parser.process_args()
+    assert args[1] == ""
+
     
