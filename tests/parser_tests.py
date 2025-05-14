@@ -51,3 +51,9 @@ def test_first_argument_can_handle_second_time_format():
     assert args[0].isnumeric()
     assert int(args[0]) == 20
 
+def test_first_argument_can_handle_hour_time_format():
+    valid_parser = CommandLineArgsParser("1h", "Walk the dog in an hour")
+    args = valid_parser.process_args()
+    assert args[0].isnumeric()
+    assert int(args[0]) == 1
+
