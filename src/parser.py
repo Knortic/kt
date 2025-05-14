@@ -22,8 +22,9 @@ class CommandLineArgsParser:
         duration = self.args[0]
 
         is_minute_format = duration.endswith('m')
+        is_second_format = duration.endswith('s')
 
-        if is_minute_format:
+        if  is_second_format or is_minute_format:
             duration = duration[:-1]
             self.args[0] = duration
 
@@ -32,9 +33,11 @@ class CommandLineArgsParser:
         elif (int(duration) < 0):
             raise InvalidArgumentError("Specified duration cannot be negative!")
 
+        if is_second_format:
+            self.out_timestamp = TimeStamp(timedelta(seconds=int(duration)))
+
         if is_minute_format:
             self.out_timestamp = TimeStamp(timedelta(minutes=int(duration)))
-            print(self.out_timestamp.date)
 
         description = self.args[1]
 
