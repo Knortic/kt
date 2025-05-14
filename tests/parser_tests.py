@@ -8,7 +8,4 @@ def test_is_command_line_args_greater_than_zero():
 
 def test_is_first_command_line_arg_a_number():
     cmd_line_args = parser.fetch_args()
-    if cmd_line_args[0].isnumeric():
-        assert True
-    else:
-        assert False
+    assert cmd_line_args[0].isnumeric()
