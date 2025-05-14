@@ -20,8 +20,11 @@ class CommandLineArgsParser:
     def is_minute_format(self, input_str):
         return input_str.endswith('m')
 
+    def is_hour_format(self, input_str):
+        return input_str.endswith('h')
+
     def convert_to_duration_string(self, input_str):
-        if self.is_second_format(input_str) or self.is_minute_format(input_str):
+        if self.is_second_format(input_str) or self.is_minute_format(input_str) or self.is_hour_format(input_str):
             # Trim the last character off the string
             input_str = input_str[:-1]
 
@@ -36,6 +39,7 @@ class CommandLineArgsParser:
 
         is_second_format = self.is_second_format(raw_duration)
         is_minute_format = self.is_minute_format(raw_duration)
+        is_hour_format = self.is_hour_format(raw_duration)
 
         self.args[0] = self.convert_to_duration_string(raw_duration)
         duration = self.args[0]
@@ -50,6 +54,9 @@ class CommandLineArgsParser:
 
         if is_minute_format:
             self.out_timestamp = TimeStamp(timedelta(minutes=int(duration)))
+
+        if is_hour_format:
+            self.out_timestamp = TimeStamp(timedelta(hours=int(duration)))
 
         description = self.args[1]
 
