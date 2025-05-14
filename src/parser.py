@@ -1,3 +1,3 @@
 class CommandLineArgsParser:
     def fetch_args(self):
-        return ["test"]
+        return ["0"]
