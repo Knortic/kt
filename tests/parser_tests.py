@@ -31,3 +31,10 @@ def test_given_first_command_line_arg_negative_should_throw_exception():
     with pytest.raises(InvalidArgumentError):
         invalid_parser.process_args()
 
+def test_given_first_command_line_arg_is_not_a_number_throw_exception():
+    invalid_parser = CommandLineArgsParser("test", "test")
+
+    with pytest.raises(InvalidArgumentError):
+        invalid_parser.process_args()
+
+
