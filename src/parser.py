@@ -23,8 +23,20 @@ class CommandLineArgsParser:
     def is_hour_format(self, input_str):
         return input_str.endswith('h')
 
+    def has_any_time_format(self, input_str):
+        format_match_count = 0
+
+        if self.is_second_format(input_str):
+            format_match_count += 1
+        elif self.is_minute_format(input_str):
+            format_match_count += 1
+        elif self.is_hour_format(input_str):
+            format_match_count += 1
+
+        return format_match_count > 0
+
     def convert_to_duration_string(self, input_str):
-        if self.is_second_format(input_str) or self.is_minute_format(input_str) or self.is_hour_format(input_str):
+        if self.has_any_time_format(input_str):
             # Trim the last character off the string
             input_str = input_str[:-1]
 
