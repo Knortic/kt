@@ -19,4 +19,9 @@ class CommandLineArgsParser:
         elif (int(duration) < 0):
             raise InvalidArgumentError("Specified duration cannot be negative!")
 
+        description = self.args[1]
+
+        if not isinstance(description, str):
+            raise InvalidArgumentError("Invalid second argument, must be of type string!")
+
         return self.args
