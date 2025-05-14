@@ -8,4 +8,6 @@ class CommandLineArgsParser:
     def process_args(self):
         if len(self.args) > 2:
             raise InvalidArgumentError("Arguments exceeded size of 2!")
+        elif (int(self.args[0]) < 0):
+            raise InvalidArgumentError("Specified time cannot be negative!")
         return self.args
