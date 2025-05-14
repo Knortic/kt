@@ -1,19 +1,22 @@
 class InvalidArgumentError(Exception):
     pass
 
+MAX_ARGS = 2
+
 class CommandLineArgsParser:
     def __init__(self, *args):
         self.args = list(args)
 
     def process_args(self):
-        if not (self.args[0].isnumeric()):
-            raise InvalidArgumentError("Invalid first argument, must be numeric!")
-
-        is_time_negative = int(self.args[0]) < 0
-        has_too_many_args = len(self.args) > 2
-
+        has_too_many_args = len(self.args) > MAX_ARGS
         if has_too_many_args:
             raise InvalidArgumentError("Arguments exceeded size of 2!")
-        elif (is_time_negative):
-            raise InvalidArgumentError("Specified time cannot be negative!")
+
+        duration = self.args[0]
+
+        if not (duration.isnumeric()):
+            raise InvalidArgumentError("Invalid first argument, must be numeric!")
+        elif (int(duration) < 0):
+            raise InvalidArgumentError("Specified duration cannot be negative!")
+
         return self.args
