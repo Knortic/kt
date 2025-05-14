@@ -6,6 +6,9 @@ class CommandLineArgsParser:
         self.args = list(args)
 
     def process_args(self):
+        if not (self.args[0].isnumeric()):
+            raise InvalidArgumentError("Invalid first argument, must be numeric!")
+
         is_time_negative = int(self.args[0]) < 0
         has_too_many_args = len(self.args) > 2
 
