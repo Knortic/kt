@@ -1,3 +1,6 @@
 class CommandLineArgsParser:
-    def fetch_args(self):
-        return ["0"]
+    def __init__(self, args):
+        self.args = args
+
+    def process_args(self):
+        return self.args
