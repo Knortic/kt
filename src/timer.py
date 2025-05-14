@@ -14,3 +14,6 @@ class Timer:
     def start(self):
         self.active = True
 
+    def stop(self):
+        self.active = False
+
