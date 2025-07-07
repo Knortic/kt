@@ -20,11 +20,5 @@ class FakeFileWriter(IWriter):
         self.returned_filename = ""
 
     def write(self):
-        pass
-        
-
-
-
-
-
-
+        self.write_amount += 1
+ 
