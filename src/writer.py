@@ -21,4 +21,5 @@ class FakeFileWriter(IWriter):
 
     def write(self):
         self.write_amount += 1
+        self.returned_filename = self.timestamp.strftime("%Y%m%d_%H%M%S")
  
