@@ -57,3 +57,14 @@ def test_when_timer_is_started_should_contain_non_empty_filename():
     t.start()
     assert fake_writer.returned_filename != ""
 
+def test_when_timer_is_started_fake_writer_should_contain_filename_matching_parser():
+    new_parser = CommandLineArgsParser("5m", "This should finish in 5 minutes")
+    new_parser.process_args();
+    fake_writer = FakeFileWriter(new_parser.out_timestamp.current_timestamp)
+
+    t = Timer(new_parser, fake_writer)
+    validate_timer(t)
+    t.start()
+    parser_filename = new_parser.out_timestamp.current_timestamp.strftime("%Y%m%d_%H%M%S")
+    assert fake_writer.returned_filename == parser_filename
+
