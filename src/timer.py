@@ -14,6 +14,7 @@ class Timer:
 
     def start(self):
         self.active = True
+        self.writer.write()
 
     def stop(self):
         self.active = False
