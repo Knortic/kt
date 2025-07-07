@@ -1,8 +1,5 @@
-from src.parser import CommandLineArgsParser
-
 class Timer:
-    def __init__(self, parser, writer):
-        self.parser = parser
+    def __init__(self, writer):
         self.writer = writer
         self.active = False
 
