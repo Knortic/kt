@@ -11,3 +11,4 @@ def test_write_is_called_has_valid_returned_filename():
     w = FakeFileWriter(datetime.now())
     w.write()
     assert w.returned_filename != ""
+
