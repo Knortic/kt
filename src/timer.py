@@ -1,21 +1,7 @@
 class Timer:
-    def __init__(self, writer):
-        self.writer = writer
-        self.active = False
-
-    def is_active(self):
-        return self.active
+    def __init__(self, parser):
+        self.parser = parser
 
     def create(self):
         return True
-
-    def start(self):
-        if (self.active):
-            return
-
-        self.active = True
-        self.writer.write()
-
-    def stop(self):
-        self.active = False
 
