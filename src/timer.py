@@ -13,6 +13,9 @@ class Timer:
         return True
 
     def start(self):
+        if (self.active):
+            return
+
         self.active = True
         self.writer.write()
 
