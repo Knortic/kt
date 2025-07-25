@@ -61,3 +61,9 @@ def test_given_invalid_command_line_args_with_args_count_of_four_should_not_thro
 
     with pytest.raises(InvalidArgumentError):
         invalid_parser.process_args()
+
+def test_given_command_line_args_with_non_string_message_should_throw_exception():
+    invalid_parser = CommandLineArgsParser("-m", 123, "-t" "20s")
+
+    with pytest.raises(InvalidArgumentError):
+        invalid_parser.process_args()
