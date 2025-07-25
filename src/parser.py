@@ -13,6 +13,13 @@ class ParsedCommand:
         self.timestamp = timestamp
         self.message = message
 
+# TODO: Add ability to do days, maybe even months
+# TODO: Add ability to parse more complicated time durations e.g. 1 hour 20 minutes 30 seconds:
+#   kt add -m "test" -t "1h20m30s"
+#   kt add -m "test" -t "1h 20m 30s"
+#   kt add -m "test" -t "1h;20m;30s"
+# Decide on a suitable format...
+
 class CommandLineArgsParser:
     def __init__(self, *args):
         self.args = list(args)
