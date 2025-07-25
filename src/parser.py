@@ -15,11 +15,7 @@ class ParsedCommand:
 
 class CommandLineArgsParser:
     def __init__(self, *args):
-        # If the args are already a list then we don't need to convert
-        if isinstance(args, list):
-            self.args = args
-        else:
-            self.args = list(args)
+        self.args = list(args)
 
     def is_second_format(self, input_str):
         return input_str.endswith('s')
@@ -81,16 +77,18 @@ class CommandLineArgsParser:
         is_minute_format = self.is_minute_format(raw_duration)
         is_hour_format = self.is_hour_format(raw_duration)
 
+        out_timestamp = None
+
         if is_second_format:
-            self.out_timestamp = TimeStamp(timedelta(seconds=int(duration)))
+            out_timestamp = TimeStamp(timedelta(seconds=int(duration)))
 
         if is_minute_format:
-            self.out_timestamp = TimeStamp(timedelta(minutes=int(duration)))
+            out_timestamp = TimeStamp(timedelta(minutes=int(duration)))
 
         if is_hour_format:
-            self.out_timestamp = TimeStamp(timedelta(hours=int(duration)))
+            out_timestamp = TimeStamp(timedelta(hours=int(duration)))
 
-        parsed_cmd = ParsedCommand(self.out_timestamp, "")
+        parsed_cmd = ParsedCommand(out_timestamp, "")
 
         # No message was provided if the args count is 2 so we can just return the parsed command without assigning a message first
         if arg_count == 2:
