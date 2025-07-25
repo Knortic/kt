@@ -3,16 +3,23 @@ from datetime import datetime, timedelta
 class InvalidArgumentError(Exception):
     pass
 
-MAX_ARGS = 2
-
 class TimeStamp:
     def __init__(self, future_timestamp):
         self.current_timestamp = datetime.now()
         self.date = self.current_timestamp + future_timestamp 
 
+class ParsedCommand:
+    def __init__(self, timestamp, message):
+        self.timestamp = timestamp
+        self.message = message
+
 class CommandLineArgsParser:
     def __init__(self, *args):
-        self.args = list(args)
+        # If the args are already a list then we don't need to convert
+        if isinstance(args, list):
+            self.args = args
+        else:
+            self.args = list(args)
 
     def is_second_format(self, input_str):
         return input_str.endswith('s')
@@ -45,26 +52,34 @@ class CommandLineArgsParser:
     def process_args(self):
         arg_count = len(self.args)
 
-        if arg_count == 0:
-            raise InvalidArgumentError("No arguments provided! Argument count should be either 1 or 2!")
+        # Required argument count is either 2 or 4 because the format is as follows:
+        # 2: "-t" "20s"
+        # 4: "-m" "Message here" "-t" "20s"
+        has_invalid_arg_count = arg_count != 2 and arg_count != 4
+        if has_invalid_arg_count:
+            raise InvalidArgumentError("Invalid argument count provided!")
 
-        has_too_many_args = arg_count > MAX_ARGS
-        if has_too_many_args:
-            raise InvalidArgumentError("Arguments exceeded size of 2!")
+        if arg_count == 2:
+            if self.args[0] != "-t":
+                raise InvalidArgumentError("Provided invalid first argument, expected '-t'")
+        else:
+            if self.args[0] != "-m":
+                raise InvalidArgumentError("Provided invalid first argument, expected '-m'")
 
-        raw_duration = self.args[0]
+        # To grab the duration we can just get the last argument since if correct arguments were provided then it is the last argument in the list
+        raw_duration = self.args[-1]
+
+        self.args[-1] = self.convert_to_duration_string(raw_duration)
+        duration = self.args[-1]
+
+        if not (duration.isnumeric()):
+            raise InvalidArgumentError("Specified duration must be numeric!")
+        elif (int(duration) < 0):
+            raise InvalidArgumentError("Specified duration cannot be negative!")
 
         is_second_format = self.is_second_format(raw_duration)
         is_minute_format = self.is_minute_format(raw_duration)
         is_hour_format = self.is_hour_format(raw_duration)
-
-        self.args[0] = self.convert_to_duration_string(raw_duration)
-        duration = self.args[0]
-
-        if not (duration.isnumeric()):
-            raise InvalidArgumentError("Invalid first argument, must be numeric!")
-        elif (int(duration) < 0):
-            raise InvalidArgumentError("Specified duration cannot be negative!")
 
         if is_second_format:
             self.out_timestamp = TimeStamp(timedelta(seconds=int(duration)))
@@ -75,12 +90,17 @@ class CommandLineArgsParser:
         if is_hour_format:
             self.out_timestamp = TimeStamp(timedelta(hours=int(duration)))
 
-        if arg_count == 1:
-            return self.args
+        parsed_cmd = ParsedCommand(self.out_timestamp, "")
 
-        description = self.args[1]
+        # No message was provided if the args count is 2 so we can just return the parsed command without assigning a message first
+        if arg_count == 2:
+            return parsed_cmd
 
-        if not isinstance(description, str):
-            raise InvalidArgumentError("Invalid second argument, must be of type string!")
+        message = self.args[1]
 
-        return self.args
+        if not isinstance(message, str):
+            raise InvalidArgumentError("Invalid message provided, must be of type string!")
+
+        parsed_cmd.message = message
+
+        return parsed_cmd
