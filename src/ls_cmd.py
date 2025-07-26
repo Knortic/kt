@@ -14,7 +14,7 @@ def format_timedelta(td):
         result += f"{hours}h "
     if minutes > 0:
         result += f"{minutes}m "
-    if seconds > 0 or not parts:
+    if seconds > 0 or result == "":
         result += f"{seconds}s"
 
     return result
