@@ -1,8 +1,8 @@
 import sys
+import subprocess
 import json
 import os
 import time
-import subprocess
 
 import psutil
 
@@ -10,38 +10,12 @@ from winotify import Notification, audio
 
 from datetime import datetime, timedelta
 
-from src.ls_cmd import handle_ls_cmd
+from src.start_cmd import handle_start_cmd
 from src.add_cmd import handle_add_cmd
+from src.ls_cmd import handle_ls_cmd
 
 timers_filepath = "timers.json"
 service_filepath = "kt.pid"
-
-def start_service():
-    print("starting service...")
-    DETACHED_PROCESS = 0x00000008
-    subprocess.Popen(
-        [sys.executable, __file__, "--service"],
-        creationflags=DETACHED_PROCESS,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        stdin=subprocess.DEVNULL
-    )
-
-def handle_start_cmd(args):
-    try:
-        with open(service_filepath, "r") as file_handle:
-            read_content = file_handle.read()
-
-        if read_content != None:
-            if (psutil.pid_exists(int(read_content))):
-                print("exists already")
-                # TODO: Print to console saying the service is already started (probs using stdout)
-                return
-            else:
-                start_service()
-
-    except FileNotFoundError:
-        start_service()
 
 def handle_stop_cmd(args):
     if not os.path.exists(service_filepath):
@@ -108,7 +82,7 @@ def main():
     args = sys.argv[1:]
 
     if args[0] == "start":
-        handle_start_cmd(args)
+        handle_start_cmd(service_filepath)
     elif args[0] == "stop":
         handle_stop_cmd(args)
     elif args[0] == "--service":
