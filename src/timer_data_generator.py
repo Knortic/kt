@@ -10,11 +10,11 @@ class TimerData:
 
 class JsonTimerDataGenerator(IDataGenerator):
     def __init__(self, timer_data):
-        self.timer_data = timer_data 
+        self.timer_data = timer_data
 
-    def generate_data(self):
-        self.json_obj = []
-        self.json_obj.append({})
+    def generate_data_from_existing(self, data):
+        if not isinstance(data, list):
+            raise InvalidArgumentError("Provided data was invalid!")
 
         if self.timer_data.timestamp is None:
             raise InvalidArgumentError("Invalid timestamp within timer data!")
@@ -23,18 +23,25 @@ class JsonTimerDataGenerator(IDataGenerator):
         elif not isinstance(self.timer_data.duration, str):
             raise InvalidArgumentError("Invalid duration within timer data!")
 
-        # This is generating the data for the first time so hard-coding id of 0
-        # is intentional
-        self.json_obj[0]["id"] = 0;
+        # We compute the latest_id by first getting the length of the items
+        # in the json data and then substracting one to convert it to index-based
+        latest_id = len(data) - 1
 
-        # This is generating the data for the first time so hard-coding 'False'
-        # is intentional
-        self.json_obj[0]["paused"] = False;
-        # This is generating the data for the first time so hard-coding 'False'
-        # is intentional
-        self.json_obj[0]["reset"] = False;
+        self.json_obj = data
+        self.json_obj.append({})
 
-        self.json_obj[0]["message"] = self.timer_data.message;
-        self.json_obj[0]["duration"] = self.timer_data.duration;
+        # Since this is the next item we are generating we need to add one
+        # otherwise the latest id will point to the previous item and not the new
+        # item we are generating
+        self.json_obj[-1]["id"] = latest_id + 1;
 
+        self.json_obj[-1]["paused"] = False;
+        self.json_obj[-1]["reset"] = False;
+
+        self.json_obj[-1]["message"] = self.timer_data.message;
+        self.json_obj[-1]["duration"] = self.timer_data.duration;
+
+    def generate_data(self):
+        self.json_obj = []
+        self.generate_data_from_existing(self.json_obj)
 
