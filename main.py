@@ -1,7 +1,6 @@
 import sys
 import json
 import os
-import time
 import subprocess
 
 import psutil
@@ -9,6 +8,8 @@ import psutil
 from winotify import Notification, audio
 
 from datetime import datetime, timedelta
+
+from src.ls_cmd import handle_ls_cmd
 
 timers_filepath = "timers.json"
 service_filepath = "kt.pid"
@@ -103,8 +104,6 @@ def handle_add_cmd(args):
             with open(timers_filepath, "w") as file_handle:
                 json.dump(json_obj, file_handle, indent=2)
 
-            # self.json_obj[-1]["timestamp"] = self.timer_data.timestamp.isoformat();
-
     except FileNotFoundError:
         with open(timers_filepath, "w") as file_handle:
             json_obj = []
@@ -121,7 +120,6 @@ def handle_add_cmd(args):
 
     print(json_obj)
     return
-
 
     toast = Notification(app_id="k timer (kt)",
                          title=timer_title,
@@ -221,6 +219,8 @@ def main():
         handle_service_cmd(args)
     elif args[0] == "add":
         handle_add_cmd(args)
+    elif args[0] == "ls":
+        handle_ls_cmd(timers_filepath, args)
     else:
         # TODO: Actually print to shell properly probs using stdout
         print("Not a valid command")
