@@ -64,17 +64,21 @@ def test_given_valid_timer_data_call_to_generate_data_should_return_expected_obj
     expected_obj = []
     expected_obj.append({})
 
+    current_time = datetime.now()
+
     expected_obj[0]["id"] = 0;
     expected_obj[0]["message"] = "test";
     expected_obj[0]["duration"] = "1m";
     expected_obj[0]["paused"] = False;
     expected_obj[0]["reset"] = False;
 
-    timer_data = TimerData(timestamp = datetime.now(),
+    timer_data = TimerData(timestamp = current_time,
                            message = expected_obj[0]["message"],
                            duration = expected_obj[0]["duration"])
 
     timer_data_gen = JsonTimerDataGenerator(timer_data)
+
+    expected_obj[0]["timestamp"] = timer_data_gen.timer_data.timestamp.isoformat();
     
     timer_data_gen.generate_data()
 
@@ -84,13 +88,15 @@ def test_given_existing_json_data_returns_correct_id_from_generated_object():
     sample_data = []
     sample_data.append({})
 
+    current_time = datetime.now()
+
     sample_data[0]["id"] = 0;
     sample_data[0]["message"] = "test";
     sample_data[0]["duration"] = "1m";
     sample_data[0]["paused"] = False;
     sample_data[0]["reset"] = False;
 
-    timer_data = TimerData(timestamp = datetime.now(),
+    timer_data = TimerData(timestamp = current_time,
                            message = sample_data[0]["message"],
                            duration = sample_data[0]["duration"])
 
@@ -101,7 +107,7 @@ def test_given_existing_json_data_returns_correct_id_from_generated_object():
     expected_id = 1
     assert(timer_data_gen.json_obj[-1]["id"] == expected_id)
 
-    timer_data = TimerData(timestamp = datetime.now(),
+    timer_data = TimerData(timestamp = current_time,
                            message = sample_data[0]["message"],
                            duration = sample_data[0]["duration"])
 
@@ -114,7 +120,7 @@ def test_given_existing_json_data_returns_correct_id_from_generated_object():
 
     sample_data.append({})
 
-    timer_data = TimerData(timestamp = datetime.now(),
+    timer_data = TimerData(timestamp = current_time,
                            message = sample_data[0]["message"],
                            duration = sample_data[0]["duration"])
 

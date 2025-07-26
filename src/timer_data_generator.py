@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from src.generator import IDataGenerator
 from src.writer import IWriter
 from src.errors import InvalidArgumentError
@@ -40,6 +42,8 @@ class JsonTimerDataGenerator(IDataGenerator):
 
         self.json_obj[-1]["message"] = self.timer_data.message;
         self.json_obj[-1]["duration"] = self.timer_data.duration;
+
+        self.json_obj[-1]["timestamp"] = self.timer_data.timestamp.isoformat();
 
     def generate_data(self):
         self.json_obj = []
