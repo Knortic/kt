@@ -5,8 +5,6 @@ import time
 
 import psutil
 
-from winotify import Notification, audio
-
 from datetime import datetime, timedelta
 
 from src.start_cmd import handle_start_cmd
