@@ -1,5 +1,4 @@
 import sys
-import subprocess
 import json
 import os
 import time
@@ -11,18 +10,12 @@ from winotify import Notification, audio
 from datetime import datetime, timedelta
 
 from src.start_cmd import handle_start_cmd
+from src.stop_cmd import handle_stop_cmd
 from src.add_cmd import handle_add_cmd
 from src.ls_cmd import handle_ls_cmd
 
 timers_filepath = "timers.json"
 service_filepath = "kt.pid"
-
-def handle_stop_cmd(args):
-    if not os.path.exists(service_filepath):
-        # TODO: Print to console saying the service is already started
-        return
-
-    os.remove(service_filepath)
 
 def handle_service_cmd(args):
     with open(service_filepath, "w") as file_handle:
@@ -84,7 +77,7 @@ def main():
     if args[0] == "start":
         handle_start_cmd(service_filepath)
     elif args[0] == "stop":
-        handle_stop_cmd(args)
+        handle_stop_cmd(service_filepath)
     elif args[0] == "--service":
         handle_service_cmd(args)
     elif args[0] == "add":
