@@ -20,8 +20,6 @@ def handle_start_cmd(service_filepath):
         with open(service_filepath, "r") as file_handle:
             read_content = file_handle.read()
 
-            print(f"read_content: {read_content}")
-
             if read_content != None:
                 if (psutil.pid_exists(int(read_content))):
                     print("exists already")
