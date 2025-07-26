@@ -29,12 +29,9 @@ class FileWriter(IWriter):
         self.write_with_path(self.path)
 
 class FakeFileWriter(IWriter):
-    def __init__(self, timestamp):
-        self.timestamp = timestamp
+    def __init__(self):
         self.write_amount = 0
-        self.returned_filename = ""
 
     def write(self):
         self.write_amount += 1
-        self.returned_filename = self.timestamp.strftime("%Y%m%d_%H%M%S")
  
