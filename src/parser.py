@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
-class InvalidArgumentError(Exception):
-    pass
+from src.errors import InvalidArgumentError
 
 class TimeStamp:
     def __init__(self, future_timestamp):
