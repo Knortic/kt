@@ -48,6 +48,24 @@ def handle_remove(json_obj, timer_id, args):
         for idx, item in enumerate(json_obj):
             item["id"] = idx
 
+def handle_resume(json_obj, timer_id, args):
+    if args[2] == "resume":
+        # If there is no pause timestamp then it is assumed we
+        # are trying to start an already active/ticking timer
+        if not json_obj[timer_id].get("pause-timestamp"):
+            return
+
+        current_time = datetime.now()
+
+        active_timestamp = datetime.fromisoformat(json_obj[timer_id]["timestamp"])
+        pause_timestamp = datetime.fromisoformat(json_obj[timer_id]["pause-timestamp"])
+
+        new_timestamp = (active_timestamp - pause_timestamp) + current_time
+        new_timestamp = new_timestamp.replace(microsecond=0)
+
+        json_obj[timer_id]["timestamp"] = new_timestamp.isoformat()
+        json_obj[timer_id].pop("pause-timestamp")
+
 def handle_manage_cmd(timers_filepath, args):
     if len(args) <= 1:
         # TODO: Actually print to shell properly probs using stdout ("Invalid argument count")
@@ -73,23 +91,7 @@ def handle_manage_cmd(timers_filepath, args):
                 handle_pause_state(json_obj, timer_id, args)
                 handle_reset_state(json_obj, timer_id, args)
                 handle_remove(json_obj, timer_id, args)
-
-                if args[2] == "resume":
-                    # If there is no pause timestamp then it is assumed we
-                    # are trying to start an already active/ticking timer
-                    if not json_obj[timer_id].get("pause-timestamp"):
-                        return
-
-                    current_time = datetime.now()
-
-                    active_timestamp = datetime.fromisoformat(json_obj[timer_id]["timestamp"])
-                    pause_timestamp = datetime.fromisoformat(json_obj[timer_id]["pause-timestamp"])
-
-                    new_timestamp = (active_timestamp - pause_timestamp) + current_time
-                    new_timestamp = new_timestamp.replace(microsecond=0)
-
-                    json_obj[timer_id]["timestamp"] = new_timestamp.isoformat()
-                    json_obj[timer_id].pop("pause-timestamp")
+                handle_resume(json_obj, timer_id, args)
 
                 with open(timers_filepath, "w") as file_handle:
                     json.dump(json_obj, file_handle, indent=2)
