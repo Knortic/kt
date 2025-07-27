@@ -21,6 +21,14 @@ def handle_reset_state(json_obj, timer_id, args):
     if args[2] == "stop" or args[2] == "reset":
         json_obj[timer_id]["reset"] = True
 
+def handle_remove_state(json_obj, timer_id, args):
+    if args[2] == "remove" or "rm":
+        json_obj.pop(timer_id)
+
+        # Sort the items to rearrange their ids
+        for idx, item in enumerate(json_obj):
+            item["id"] = idx
+
 def handle_manage_cmd(timers_filepath, args):
     if len(args) <= 1:
         # TODO: Actually print to shell properly probs using stdout ("Invalid argument count")
@@ -45,13 +53,7 @@ def handle_manage_cmd(timers_filepath, args):
 
                 handle_pause_state(json_obj, timer_id, args)
                 handle_reset_state(json_obj, timer_id, args)
-
-                if args[2] == "remove" or "rm":
-                    json_obj.pop(timer_id)
-
-                    # Sort the items to rearrange their ids
-                    for idx, item in enumerate(json_obj):
-                        item["id"] = idx
+                handle_remove_state(json_obj, timer_id, args)
 
                 with open(timers_filepath, "w") as file_handle:
                     json.dump(json_obj, file_handle, indent=2)
