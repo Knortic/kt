@@ -2,12 +2,29 @@ import json
 
 from datetime import datetime, timedelta
 
-cmds = [ "pause", "unpause", "toggle-pause",
+cmds = [ "pause", "toggle-pause",
          "stop", "reset",
          "remove", "rm",
          "start",
-         "resume"
+         "unpause", "resume"
        ]
+
+def on_unpause(json_obj, timer_id):
+    # If there is no pause timestamp then it is assumed we
+    # are trying to start an already active/ticking timer
+    if not json_obj[timer_id].get("pause-timestamp"):
+        return
+
+    current_time = datetime.now()
+
+    active_timestamp = datetime.fromisoformat(json_obj[timer_id]["timestamp"])
+    pause_timestamp = datetime.fromisoformat(json_obj[timer_id]["pause-timestamp"])
+
+    new_timestamp = (active_timestamp - pause_timestamp) + current_time
+    new_timestamp = new_timestamp.replace(microsecond=0)
+
+    json_obj[timer_id]["timestamp"] = new_timestamp.isoformat()
+    json_obj[timer_id].pop("pause-timestamp")
 
 def handle_pause_state(json_obj, timer_id, args):
 
@@ -22,13 +39,9 @@ def handle_pause_state(json_obj, timer_id, args):
 
         json_obj[timer_id]["pause-timestamp"] = current_time.isoformat()
 
-    # Removes pause timestamp entry from json object
-    def on_unpause(json_obj, timer_id):
-        json_obj[timer_id].pop("pause-timestamp")
-
     if args[2] == "pause":
         on_pause(json_obj, timer_id)
-    elif args[2] == "unpause":
+    elif args[2] == "unpause" or args[2] == "resume":
         on_unpause(json_obj, timer_id)
     elif args[2] == "toggle-pause":
         if json_obj[timer_id].get("pause-timestamp"):
@@ -48,23 +61,32 @@ def handle_remove(json_obj, timer_id, args):
         for idx, item in enumerate(json_obj):
             item["id"] = idx
 
-def handle_resume(json_obj, timer_id, args):
-    if args[2] == "resume":
-        # If there is no pause timestamp then it is assumed we
-        # are trying to start an already active/ticking timer
-        if not json_obj[timer_id].get("pause-timestamp"):
+def handle_start(json_obj, timer_id, args):
+    if args[2] == "start":
+        if not json_obj[timer_id].get("duration"):
+            # TODO: Actually print to shell properly probs using stdout
             return
 
-        current_time = datetime.now()
+        duration_timestamp = datetime.now() 
 
-        active_timestamp = datetime.fromisoformat(json_obj[timer_id]["timestamp"])
-        pause_timestamp = datetime.fromisoformat(json_obj[timer_id]["pause-timestamp"])
+        duration_key = json_obj[timer_id]["duration"]
+        duration_key_int = int(json_obj[timer_id]["duration"][:-1])
 
-        new_timestamp = (active_timestamp - pause_timestamp) + current_time
-        new_timestamp = new_timestamp.replace(microsecond=0)
+        if duration_key.endswith('s'):
+            duration_timestamp += timedelta(seconds=duration_key_int)
+        elif duration_key.endswith('m'):
+            duration_timestamp += timedelta(minutes=duration_key_int)
+        elif duration_key.endswith('h'):
+            duration_timestamp += timedelta(hours=duration_key_int)
 
-        json_obj[timer_id]["timestamp"] = new_timestamp.isoformat()
-        json_obj[timer_id].pop("pause-timestamp")
+        duration_timestamp = duration_timestamp.replace(microsecond=0)
+
+        # Subtract 1 second from the timestamp otherwise
+        # the time won't be accurate
+        duration_timestamp = duration_timestamp - timedelta(seconds=1)
+
+        json_obj[timer_id]["timestamp"] = duration_timestamp.isoformat()
+
 
 def handle_manage_cmd(timers_filepath, args):
     if len(args) <= 1:
@@ -91,32 +113,7 @@ def handle_manage_cmd(timers_filepath, args):
                 handle_pause_state(json_obj, timer_id, args)
                 handle_reset_state(json_obj, timer_id, args)
                 handle_remove(json_obj, timer_id, args)
-                handle_resume(json_obj, timer_id, args)
-
-                if args[2] == "start":
-                    if not json_obj[timer_id].get("duration"):
-                        # TODO: Actually print to shell properly probs using stdout
-                        return
-
-                    duration_timestamp = datetime.now() 
-
-                    duration_key = json_obj[timer_id]["duration"]
-                    duration_key_int = int(json_obj[timer_id]["duration"][:-1])
-
-                    if duration_key.endswith('s'):
-                        duration_timestamp += timedelta(seconds=duration_key_int)
-                    elif duration_key.endswith('m'):
-                        duration_timestamp += timedelta(minutes=duration_key_int)
-                    elif duration_key.endswith('h'):
-                        duration_timestamp += timedelta(hours=duration_key_int)
-
-                    duration_timestamp = duration_timestamp.replace(microsecond=0)
-
-                    # Subtract 1 second from the timestamp otherwise
-                    # the time won't be accurate
-                    duration_timestamp = duration_timestamp - timedelta(seconds=1)
-
-                    json_obj[timer_id]["timestamp"] = duration_timestamp.isoformat()
+                handle_start(json_obj, timer_id, args)
 
                 with open(timers_filepath, "w") as file_handle:
                     json.dump(json_obj, file_handle, indent=2)
