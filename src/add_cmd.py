@@ -75,7 +75,6 @@ def handle_add_cmd(timers_filepath, args):
             json_obj[-1]["duration"] = cmd_duration;
             json_obj[-1]["timestamp"] = cmd_timestamp.isoformat();
 
-            json_obj[-1]["paused"] = False;
             json_obj[-1]["reset"] = False;
 
             with open(timers_filepath, "w") as file_handle:
@@ -90,7 +89,6 @@ def handle_add_cmd(timers_filepath, args):
             json_obj[0]["message"] = cmd_message
             json_obj[0]["duration"] = cmd_duration
             json_obj[0]["timestamp"] = cmd_timestamp.isoformat();
-            json_obj[0]["paused"] = False
             json_obj[0]["reset"] = False
 
             json.dump(json_obj, file_handle, indent=2)

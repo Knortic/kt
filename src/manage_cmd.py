@@ -1,21 +1,40 @@
 import json
 
+from datetime import datetime, timedelta
+
 cmds = [ "pause", "unpause", "toggle-pause",
          "stop", "reset",
-         "remove", "rm"
+         "remove", "rm",
+         "start",
+         "resume"
        ]
 
 def handle_pause_state(json_obj, timer_id, args):
-    pause_state = json_obj[timer_id]["paused"] 
+
+    # Adds pause timestamp entry to json object
+    def on_pause(json_obj, timer_id):
+        current_time = datetime.now()
+
+        # Subtract 1 second from the converted time otherwise
+        # the time won't be accurate
+        current_time = current_time - timedelta(seconds=1)
+        current_time = current_time.replace(microsecond=0)
+
+        json_obj[timer_id]["pause-timestamp"] = current_time.isoformat()
+
+    # Removes pause timestamp entry from json object
+    def on_unpause(json_obj, timer_id):
+        json_obj[timer_id].pop("pause-timestamp")
 
     if args[2] == "pause":
-        pause_state = True
+        on_pause(json_obj, timer_id)
     elif args[2] == "unpause":
-        pause_state = False
+        on_unpause(json_obj, timer_id)
     elif args[2] == "toggle-pause":
-        pause_state = not pause_state
-
-    json_obj[timer_id]["paused"] = pause_state
+        if json_obj[timer_id].get("pause-timestamp"):
+            on_unpause(json_obj, timer_id)
+        else:
+            on_pause(json_obj, timer_id)
 
 def handle_reset_state(json_obj, timer_id, args):
     if args[2] == "stop" or args[2] == "reset":
@@ -54,6 +73,23 @@ def handle_manage_cmd(timers_filepath, args):
                 handle_pause_state(json_obj, timer_id, args)
                 handle_reset_state(json_obj, timer_id, args)
                 handle_remove(json_obj, timer_id, args)
+
+                if args[2] == "resume":
+                    # If there is no pause timestamp then it is assumed we
+                    # are trying to start an already active/ticking timer
+                    if not json_obj[timer_id].get("pause-timestamp"):
+                        return
+
+                    current_time = datetime.now()
+
+                    active_timestamp = datetime.fromisoformat(json_obj[timer_id]["timestamp"])
+                    pause_timestamp = datetime.fromisoformat(json_obj[timer_id]["pause-timestamp"])
+
+                    new_timestamp = (active_timestamp - pause_timestamp) + current_time
+                    new_timestamp = new_timestamp.replace(microsecond=0)
+
+                    json_obj[timer_id]["timestamp"] = new_timestamp.isoformat()
+                    json_obj[timer_id].pop("pause-timestamp")
 
                 with open(timers_filepath, "w") as file_handle:
                     json.dump(json_obj, file_handle, indent=2)
