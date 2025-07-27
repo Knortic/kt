@@ -1,8 +1,9 @@
 import json
 
 from src.time_utils import convert_duration_string_to_timestamp_without_microseconds
+from datetime import datetime, timedelta
 
-cmds = [ "pause", "toggle-pause",
+cmds = [ "pause", "toggle-pause", "toggle"
          "stop", "reset",
          "remove", "rm",
          "start",
@@ -43,7 +44,7 @@ def handle_pause_state(json_obj, timer_id, args):
         on_pause(json_obj, timer_id)
     elif args[2] == "unpause" or args[2] == "resume":
         on_unpause(json_obj, timer_id)
-    elif args[2] == "toggle-pause":
+    elif args[2] == "toggle-pause" or args[2] == "toggle":
         if json_obj[timer_id].get("pause-timestamp"):
             on_unpause(json_obj, timer_id)
         else:
