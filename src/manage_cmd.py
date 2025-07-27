@@ -22,7 +22,7 @@ def handle_reset_state(json_obj, timer_id, args):
         json_obj[timer_id]["reset"] = True
 
 def handle_remove(json_obj, timer_id, args):
-    if args[2] == "remove" or "rm":
+    if args[2] == "remove" or args[2] == "rm":
         json_obj.pop(timer_id)
 
         # Sort the items to rearrange their ids
