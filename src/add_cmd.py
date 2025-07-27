@@ -1,6 +1,6 @@
 import json
 
-from datetime import datetime, timedelta
+from src.time_utils import convert_duration_string_to_timestamp_without_microseconds
 
 def handle_add_cmd(timers_filepath, args):
     # Drop the command from the args e.g. "add"
@@ -36,22 +36,8 @@ def handle_add_cmd(timers_filepath, args):
 
     read_content = None
     json_obj = None
-    cmd_timestamp = datetime.now() 
 
-    cmd_duration_int = cmd_duration[:-1]
-
-    if cmd_duration.endswith('s'):
-        cmd_timestamp += timedelta(seconds=int(cmd_duration_int))
-    elif cmd_duration.endswith('m'):
-        cmd_timestamp += timedelta(minutes=int(cmd_duration_int))
-    elif cmd_duration.endswith('h'):
-        cmd_timestamp += timedelta(hours=int(cmd_duration_int))
-
-    cmd_timestamp = cmd_timestamp.replace(microsecond=0)
-
-    # Subtract 1 second from the converted time otherwise
-    # the time won't be accurate
-    cmd_timestamp = cmd_timestamp - timedelta(seconds=1)
+    cmd_timestamp = convert_duration_string_to_timestamp_without_microseconds(cmd_duration)
 
     try:
         with open(timers_filepath, "r") as file_handle:

@@ -1,6 +1,6 @@
 import json
 
-from datetime import datetime, timedelta
+from src.time_utils import convert_duration_string_to_timestamp_without_microseconds
 
 cmds = [ "pause", "toggle-pause",
          "stop", "reset",
@@ -67,23 +67,8 @@ def handle_start(json_obj, timer_id, args):
             # TODO: Actually print to shell properly probs using stdout
             return
 
-        duration_timestamp = datetime.now() 
-
         duration_key = json_obj[timer_id]["duration"]
-        duration_key_int = int(json_obj[timer_id]["duration"][:-1])
-
-        if duration_key.endswith('s'):
-            duration_timestamp += timedelta(seconds=duration_key_int)
-        elif duration_key.endswith('m'):
-            duration_timestamp += timedelta(minutes=duration_key_int)
-        elif duration_key.endswith('h'):
-            duration_timestamp += timedelta(hours=duration_key_int)
-
-        duration_timestamp = duration_timestamp.replace(microsecond=0)
-
-        # Subtract 1 second from the timestamp otherwise
-        # the time won't be accurate
-        duration_timestamp = duration_timestamp - timedelta(seconds=1)
+        duration_timestamp = convert_duration_string_to_timestamp_without_microseconds(duration_key)
 
         json_obj[timer_id]["timestamp"] = duration_timestamp.isoformat()
 
