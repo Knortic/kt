@@ -25,7 +25,7 @@ def on_unpause(json_obj, timer_id):
     new_timestamp = None
 
     if active_timestamp < pause_timestamp:
-        new_timestamp = current_time -(pause_timestamp - active_timestamp) 
+        new_timestamp = current_time - (pause_timestamp - active_timestamp)
     else:
         new_timestamp = (active_timestamp - pause_timestamp) + current_time
 
