@@ -2,82 +2,15 @@ import os
 import json
 import time
 
-from src.time_utils import convert_duration_string_to_timestamp
+from src.time_utils import convert_duration_string_to_timestamp, format_timedelta
+from src.custom_controls import CustomTimeTextColumn, ColorBarColumn, FieldTextColumn
+
+from rich.progress import Progress, BarColumn, TimeRemainingColumn, TextColumn
+from rich.console import Console, Group
 
 from datetime import datetime, timedelta
 
-from rich.live import Live
-from rich.table import Table
-from rich.console import Console, Group
-from rich.progress import Progress, BarColumn, TimeRemainingColumn, TextColumn, SpinnerColumn
-from rich.text import Text
-from rich.columns import Columns
-from rich.align import Align
-
 current_time = None
-
-def format_timedelta(td):
-    total_seconds = int(td.total_seconds())
-    hours, remainder = divmod(total_seconds, 3600) # 3600 seconds in an hour
-    minutes, seconds = divmod(remainder, 60) # 60 seconds in a minute
-    milliseconds = td.microseconds // 1000 # Get the microseconds and then floor
-
-    result = ""
-
-    if hours > 0:
-        result += f"{hours}h "
-    if (hours > 0 and minutes >= 0) or minutes > 0:
-        result += f"{minutes}m "
-    if (minutes > 0 and seconds >= 0) or seconds > 0:# or result == "":
-        result += f"{seconds}s"
-    elif seconds == 0:
-        ms_str = str(milliseconds)
-
-        while len(ms_str) != 4:
-            ms_str = "0" + ms_str
-
-        result += f"{seconds}.{ms_str}s"
-
-    return result
-
-class ColorBarColumn(BarColumn):
-    def render(self, task):
-        # Choose color based on percentage
-        percent = task.percentage or 0
-        if percent < 30:
-            self.complete_style = "red"
-        elif percent < 100:
-            self.complete_style = "yellow"
-        else:
-            self.complete_style = "green"
-
-        return super().render(task=task)
-
-class FieldTextColumn(TextColumn):
-    def render(self, task):
-        return self.text_format.format(**task.fields.get("item"))
-
-class CustomTimeTextColumn(TextColumn):
-    def render(self, task):
-        item = task.fields.get("item")
-        timestamp = datetime.fromisoformat(item["timestamp"])
-
-        if item.get("pause-timestamp"):
-            current_time = datetime.fromisoformat(item["pause-timestamp"])
-
-        output = ""
-
-        msg = item["message"]
-
-        if msg:
-            output += f'"{msg}" '
-
-        if current_time > timestamp:
-            output += f"{format_timedelta(current_time - timestamp)} ago\n"
-        else:
-            output += f"{format_timedelta(timestamp - current_time)}\n"
-
-        return output
 
 def handle_ls_cmd(timers_filepath, args):
 
