@@ -22,15 +22,20 @@ def on_unpause(json_obj, timer_id):
     active_timestamp = datetime.fromisoformat(json_obj[timer_id]["timestamp"])
     pause_timestamp = datetime.fromisoformat(json_obj[timer_id]["pause-timestamp"])
 
-    new_timestamp = (active_timestamp - pause_timestamp) + current_time
+    new_timestamp = None
 
-    # If spammed fast enough new timestamp can actually be less than
-    # current time which should be impossible for what we want,
-    # so if that is the case then just set it to the current time instead
-    # whilst this isn't a complete fix, it is a better alternative
-    # than the impossible
-    if new_timestamp < current_time:
-        new_timestamp = current_time
+    if active_timestamp < pause_timestamp:
+        new_timestamp = current_time -(pause_timestamp - active_timestamp) 
+    else:
+        new_timestamp = (active_timestamp - pause_timestamp) + current_time
+
+        # If spammed fast enough new timestamp can actually be less than
+        # current time which should be impossible for what we want,
+        # so if that is the case then just set it to the current time instead
+        # whilst this isn't a complete fix, it is a better alternative
+        # than the impossible
+        if new_timestamp < current_time:
+            new_timestamp = current_time
 
     json_obj[timer_id]["timestamp"] = new_timestamp.isoformat()
     json_obj[timer_id].pop("pause-timestamp")
