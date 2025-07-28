@@ -67,55 +67,59 @@ def handle_ls_cmd(timers_filepath, args):
         arg_count = len(args)
 
         if arg_count <= 2:
-            with progress:
-                time_threshold = 2.1
-                while not progress.finished or arg_count == 2:
-                    refresh_display_fast = False
-                    for task in tasks:
-                        item = progress._tasks[task].fields.get("item")
-                        current_timestamp = datetime.now().timestamp()
-                        active_timestamp = datetime.fromisoformat(item["timestamp"]).timestamp()
+            try:
+                with progress:
+                    time_threshold = 2.1
+                    while not progress.finished or arg_count == 2:
+                        refresh_display_fast = False
+                        for task in tasks:
+                            item = progress._tasks[task].fields.get("item")
+                            current_timestamp = datetime.now().timestamp()
+                            active_timestamp = datetime.fromisoformat(item["timestamp"]).timestamp()
 
-                        has_pause_timestamp = False
-                        if item.get("pause-timestamp"):
-                            has_pause_timestamp = True
-                            current_timestamp = datetime.fromisoformat(item["pause-timestamp"]).timestamp()
+                            has_pause_timestamp = False
+                            if item.get("pause-timestamp"):
+                                has_pause_timestamp = True
+                                current_timestamp = datetime.fromisoformat(item["pause-timestamp"]).timestamp()
 
-                        if current_timestamp < active_timestamp:
-                            duration = convert_duration_string_to_timestamp(item['duration'])
+                            if current_timestamp < active_timestamp:
+                                duration = convert_duration_string_to_timestamp(item['duration'])
 
-                            start_timestamp = active_timestamp - duration.total_seconds()
+                                start_timestamp = active_timestamp - duration.total_seconds()
 
-                            if duration == 0:
-                                duration = -1
+                                if duration == 0:
+                                    duration = -1
 
-                            percentage = (current_timestamp - start_timestamp) / duration.total_seconds()
+                                percentage = (current_timestamp - start_timestamp) / duration.total_seconds()
 
-                            if not has_pause_timestamp:
-                                # Since sleep can be every second, we want to make sure
-                                # this will actually be hit by having a threshold
-                                if (active_timestamp - current_timestamp) < time_threshold:
-                                    refresh_display_fast = True
-                                    refresh_delay_sec = 0.05
+                                if not has_pause_timestamp:
+                                    # Since sleep can be every second, we want to make sure
+                                    # this will actually be hit by having a threshold
+                                    if (active_timestamp - current_timestamp) < time_threshold:
+                                        refresh_display_fast = True
+                                        refresh_delay_sec = 0.05
 
-                            # Clamp between 0 - 100 percent
-                            percentage = max(0, min(percentage * 100, 100))
-                        else:
-                            if not has_pause_timestamp:
-                                if (current_timestamp - active_timestamp) < time_threshold:
-                                    refresh_display_fast = True
-                                    refresh_delay_sec = 0.05
+                                # Clamp between 0 - 100 percent
+                                percentage = max(0, min(percentage * 100, 100))
+                            else:
+                                if not has_pause_timestamp:
+                                    if (current_timestamp - active_timestamp) < time_threshold:
+                                        refresh_display_fast = True
+                                        refresh_delay_sec = 0.05
 
-                            percentage = 100
+                                percentage = 100
 
-                        progress.update(task, completed=percentage)
+                            progress.update(task, completed=percentage)
 
-                    if len(args) == 1:
-                        break
+                        if len(args) == 1:
+                            break
 
-                    progress.refresh()
-                    time.sleep(refresh_delay_sec)
+                        progress.refresh()
+                        time.sleep(refresh_delay_sec)
 
-                    if not refresh_display_fast:
-                        refresh_delay_sec = 1
+                        if not refresh_display_fast:
+                            refresh_delay_sec = 1
+            except KeyboardInterrupt:
+                Console().print("\r")
+                pass
 
