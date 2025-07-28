@@ -23,24 +23,23 @@ def on_unpause(json_obj, timer_id):
     pause_timestamp = datetime.fromisoformat(json_obj[timer_id]["pause-timestamp"])
 
     new_timestamp = (active_timestamp - pause_timestamp) + current_time
-    new_timestamp = new_timestamp.replace(microsecond=0)
+
+    # If spammed fast enough new timestamp can actually be less than
+    # current time which should be impossible for what we want,
+    # so if that is the case then just set it to the current time instead
+    # whilst this isn't a complete fix, it is a better alternative
+    # than the impossible
+    if new_timestamp < current_time:
+        new_timestamp = current_time
 
     json_obj[timer_id]["timestamp"] = new_timestamp.isoformat()
     json_obj[timer_id].pop("pause-timestamp")
 
+# Adds pause timestamp entry to json object
+def on_pause(json_obj, timer_id):
+    json_obj[timer_id]["pause-timestamp"] = datetime.now().isoformat()
+
 def handle_pause_state(json_obj, timer_id, args):
-
-    # Adds pause timestamp entry to json object
-    def on_pause(json_obj, timer_id):
-        current_time = datetime.now()
-
-        # Subtract 1 second from the converted time otherwise
-        # the time won't be accurate
-        current_time = current_time - timedelta(seconds=1)
-        current_time = current_time.replace(microsecond=0)
-
-        json_obj[timer_id]["pause-timestamp"] = current_time.isoformat()
-
     if args[2] == "pause":
         on_pause(json_obj, timer_id)
     elif args[2] == "unpause" or args[2] == "resume":
