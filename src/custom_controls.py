@@ -31,7 +31,10 @@ class CustomTimeTextColumn(TextColumn):
         item = task.fields.get("item")
         timestamp = datetime.fromisoformat(item["timestamp"])
 
-        if item.get("pause-timestamp"):
+        pause_timestamp_iso = item.get("pause-timestamp")
+        has_pause_timestamp = pause_timestamp_iso 
+
+        if has_pause_timestamp:
             current_time = datetime.fromisoformat(item["pause-timestamp"])
         else:
             current_time = datetime.now()
@@ -44,9 +47,14 @@ class CustomTimeTextColumn(TextColumn):
             output += f'"{msg}" '
 
         if current_time > timestamp:
-            output += f"{format_timedelta(current_time - timestamp)} ago\n"
+            output += f"{format_timedelta(current_time - timestamp)} ago"
         else:
-            output += f"{format_timedelta(timestamp - current_time)}\n"
+            output += f"{format_timedelta(timestamp - current_time)}"
+
+        if has_pause_timestamp:
+            output += " (paused)"
+        else:
+            output += '\n'
 
         return output
 
