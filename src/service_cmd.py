@@ -29,14 +29,13 @@ def handle_service_cmd(timers_filepath, service_filepath):
 
         current_time = datetime.now()
 
-        # Remove the microseconds since we don't need our timestamp comparison
-        # to be that precise
-        converted_current_time = current_time.replace(microsecond=0)
-
         for idx, item in enumerate(json_obj):
             timestamp = datetime.fromisoformat(item["timestamp"])
 
-            if (converted_current_time >= timestamp):
+            if item.get("pause-timestamp"):
+                current_time = datetime.fromisoformat(item["pause-timestamp"])
+
+            if (current_time >= timestamp):
                 try:
                     with open(timers_filepath, "w") as file_handle:
                         json_obj.pop(idx)
@@ -45,7 +44,7 @@ def handle_service_cmd(timers_filepath, service_filepath):
                         toast = Notification(app_id="k timer (kt)",
                                              title=item["message"],
                                              #msg="test"
-                                             duration="long" if converted_current_time == timestamp else "short") # Missed notifications will appear for a shorter amount of time
+                                             duration="long" if current_time >= timestamp else "short") # Missed notifications will appear for a shorter amount of time
 
                         toast.set_audio(audio.LoopingAlarm9, loop=True)
                         toast.add_actions(label="Dismiss")

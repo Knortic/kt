@@ -1,8 +1,11 @@
 import json
 
-from src.time_utils import convert_duration_string_to_timestamp_without_microseconds
+from datetime import datetime, timedelta
+from src.time_utils import convert_duration_string_to_timestamp
 
 def handle_add_cmd(timers_filepath, args):
+    cmd_timestamp = datetime.now()
+
     # Drop the command from the args e.g. "add"
     args = args[1:]
 
@@ -37,7 +40,7 @@ def handle_add_cmd(timers_filepath, args):
     read_content = None
     json_obj = None
 
-    cmd_timestamp = convert_duration_string_to_timestamp_without_microseconds(cmd_duration)
+    cmd_timestamp += convert_duration_string_to_timestamp(cmd_duration)
 
     try:
         with open(timers_filepath, "r") as file_handle:

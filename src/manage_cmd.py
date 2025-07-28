@@ -1,6 +1,7 @@
 import json
 
-from src.time_utils import convert_duration_string_to_timestamp_without_microseconds
+from src.time_utils import convert_duration_string_to_timestamp
+
 from datetime import datetime, timedelta
 
 cmds = [ "pause", "toggle-pause", "toggle"
@@ -11,12 +12,12 @@ cmds = [ "pause", "toggle-pause", "toggle"
        ]
 
 def on_unpause(json_obj, timer_id):
+    current_time = datetime.now()
+
     # If there is no pause timestamp then it is assumed we
     # are trying to start an already active/ticking timer
     if not json_obj[timer_id].get("pause-timestamp"):
         return
-
-    current_time = datetime.now()
 
     active_timestamp = datetime.fromisoformat(json_obj[timer_id]["timestamp"])
     pause_timestamp = datetime.fromisoformat(json_obj[timer_id]["pause-timestamp"])
@@ -69,7 +70,8 @@ def handle_start(json_obj, timer_id, args):
             return
 
         duration_key = json_obj[timer_id]["duration"]
-        duration_timestamp = convert_duration_string_to_timestamp_without_microseconds(duration_key)
+        duration_timestamp = datetime.now()
+        duration_timestamp += convert_duration_string_to_timestamp(duration_key)
 
         json_obj[timer_id]["timestamp"] = duration_timestamp.isoformat()
 
