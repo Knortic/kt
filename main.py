@@ -17,6 +17,12 @@ from src.ls_cmd import handle_ls_cmd
 timers_filepath = "timers.json"
 service_filepath = "kt.pid"
 
+def handle_cleanup_cmd(timers_filepath):
+    if not os.path.exists(timers_filepath):
+        return
+
+    os.remove(timers_filepath)
+
 def main():
     # Obtain the args but skip the main executable name
     args = sys.argv[1:]
@@ -31,6 +37,8 @@ def main():
         handle_add_cmd(timers_filepath, args)
     elif args[0] == "manage":
         handle_manage_cmd(timers_filepath, args)
+    elif args[0] == "cleanup":
+        handle_cleanup_cmd(timers_filepath)
     elif args[0] == "ls":
         handle_ls_cmd(timers_filepath, args)
     else:
