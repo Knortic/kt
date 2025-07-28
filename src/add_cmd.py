@@ -82,5 +82,3 @@ def handle_add_cmd(timers_filepath, args):
 
             json.dump(json_obj, file_handle, indent=2)
 
-    print(json_obj)
-
