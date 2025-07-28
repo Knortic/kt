@@ -12,6 +12,11 @@ from datetime import datetime, timedelta
 
 current_time = None
 
+# This is mainly used for slight spacing, not quite as much
+# as a new line character but can result in prettier printing
+def print_carriage_return(console)
+    console.print('\r')
+
 def handle_ls_cmd(timers_filepath, args):
 
     current_time = datetime.now()
@@ -50,8 +55,7 @@ def handle_ls_cmd(timers_filepath, args):
 
         console = Console()
 
-        # Add a bit of spacing between the command ran and where the print will occur
-        console.print('\r')
+        print_carriage_return(console)
 
         refresh_delay_sec = 1
 
@@ -122,9 +126,9 @@ def handle_ls_cmd(timers_filepath, args):
                         if not refresh_display_fast:
                             refresh_delay_sec = 1
             except KeyboardInterrupt:
-                console.print("\r")
+                print_carriage_return()
                 return
 
-            console.print("\r")
+            print_carriage_return()
 
 
