@@ -110,5 +110,5 @@ def handle_ls_cmd(timers_filepath, args):
                         if not refresh_display_fast:
                             refresh_delay_sec = 1
             except KeyboardInterrupt:
-                return
+                pass
 
