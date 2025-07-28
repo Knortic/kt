@@ -48,8 +48,10 @@ def handle_ls_cmd(timers_filepath, args):
 
             return output
 
+        console = Console()
+
         # Add a bit of spacing between the command ran and where the print will occur
-        Console().print('\r')
+        console.print('\r')
 
         refresh_delay_sec = 1
 
@@ -120,6 +122,9 @@ def handle_ls_cmd(timers_filepath, args):
                         if not refresh_display_fast:
                             refresh_delay_sec = 1
             except KeyboardInterrupt:
-                Console().print("\r")
-                pass
+                console.print("\r")
+                return
+
+            console.print("\r")
+
 
