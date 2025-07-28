@@ -12,16 +12,11 @@ from src.stop_cmd import handle_stop_cmd
 from src.service_cmd import handle_service_cmd
 from src.add_cmd import handle_add_cmd
 from src.manage_cmd import handle_manage_cmd
+from src.cleanup_cmd import handle_cleanup_cmd
 from src.ls_cmd import handle_ls_cmd
 
 timers_filepath = "timers.json"
 service_filepath = "kt.pid"
-
-def handle_cleanup_cmd(timers_filepath):
-    if not os.path.exists(timers_filepath):
-        return
-
-    os.remove(timers_filepath)
 
 def main():
     # Obtain the args but skip the main executable name
