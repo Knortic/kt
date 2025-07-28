@@ -14,7 +14,7 @@ def test_pausing_on_same_minute_as_current_returns_expected_time():
 
     # Setup our test object to have a timestamp since it's required
     # for the function calls below
-    obj[item_idx]["timestamp"] = datetime.now().isoformat()
+    obj[item_idx]["timestamp"] = current_timestamp.isoformat()
 
     on_pause(obj, item_idx)
 
