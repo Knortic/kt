@@ -53,9 +53,8 @@ class CustomTimeTextColumn(TextColumn):
 
         if has_pause_timestamp:
             output += " (paused)"
-        else:
-            output += '\n'
+
+        output += '\n'
 
         return output
-
 
