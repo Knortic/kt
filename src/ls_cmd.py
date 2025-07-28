@@ -14,7 +14,7 @@ current_time = None
 
 # This is mainly used for slight spacing, not quite as much
 # as a new line character but can result in prettier printing
-def print_carriage_return(console)
+def print_carriage_return(console):
     console.print('\r')
 
 def handle_ls_cmd(timers_filepath, args):
@@ -36,22 +36,6 @@ def handle_ls_cmd(timers_filepath, args):
         if not json_obj:
             # TODO: Actually print to shell properly probs using stdout ("No active timers")
             return
-
-        def generate_output(json_obj):
-            output = ""
-
-            for idx, item in enumerate(json_obj):
-                output += f"{item['id']} "
-                output += f'"{item["message"]}" '
-
-                timestamp = datetime.fromisoformat(item["timestamp"])
-
-                if current_time > timestamp:
-                    output += f"{format_timedelta(current_time - timestamp)} ago\n"
-                else:
-                    output += f"{format_timedelta(timestamp - current_time)}\n"
-
-            return output
 
         console = Console()
 
@@ -126,9 +110,9 @@ def handle_ls_cmd(timers_filepath, args):
                         if not refresh_display_fast:
                             refresh_delay_sec = 1
             except KeyboardInterrupt:
-                print_carriage_return()
+                print_carriage_return(console)
                 return
 
-            print_carriage_return()
+            print_carriage_return(console)
 
 
